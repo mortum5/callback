@@ -1,0 +1,1 @@
+INSERT INTO object_status(id, last_seen) VALUES ($1, $2) ON CONFLICT(id) DO UPDATE SET last_seen=$2

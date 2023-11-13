@@ -1,0 +1,1 @@
+DELETE FROM object_status WHERE last_seen < $1
