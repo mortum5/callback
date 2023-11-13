@@ -7,7 +7,13 @@ import (
 	"time"
 )
 
-var httpClient = &http.Client{Timeout: 5 * time.Second}
+var tr = &http.Transport{
+	MaxIdleConnsPerHost: 200,
+}
+var httpClient = &http.Client{
+	Timeout:   5 * time.Second,
+	Transport: tr,
+}
 var limiter = make(chan struct{}, 200)
 
 type Client struct {
@@ -19,12 +25,7 @@ type ResponseObjectStatus struct {
 }
 
 func (c *Client) getStatus(id int) bool {
-	select {
-	case limiter <- struct{}{}:
-		break
-	case <-time.After(30 * time.Second):
-		return false
-	}
+	limiter <- struct{}{}
 	defer func() {
 		<-limiter
 	}()
